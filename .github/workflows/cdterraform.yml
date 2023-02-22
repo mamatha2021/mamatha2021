@@ -23,9 +23,9 @@ on:
         type: choice
         description: Select AWS region zone
         required: true
-        default: eu-central-1
+        default: us-west-2
         options:
-          - eu-central-1
+          - us-west-2
       destroy:
         description: Launch Terraform destroy ?
         required: true
