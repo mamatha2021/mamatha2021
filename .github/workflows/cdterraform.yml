@@ -10,8 +10,9 @@ on:
         default: supervision
         options:
           - supervision
+          - terraformtest
       environment:
-        type: environment
+        type: choice
         description: Select environment to remove
         required: true
         default: preproduction
