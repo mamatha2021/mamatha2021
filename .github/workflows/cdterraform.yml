@@ -64,7 +64,7 @@ jobs:
         working-directory: .
       - name: Terraform Plan
         id: plan
-        run: terrafrom plan -input=false
+        run: terraform plan -input=false
       - name: Terraform apply
         id: apply
-        run: terrafrom apply -input=false   
+        run: terraform apply -input=false   
