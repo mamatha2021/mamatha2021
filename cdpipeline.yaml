@@ -1,4 +1,4 @@
-name: CD - terraform Plan Destroy
+name: 'CD-terraform Plan Destroy'
 on:
   workflow_dispatch:
     inputs:
