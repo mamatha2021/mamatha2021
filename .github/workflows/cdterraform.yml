@@ -1,34 +1,5 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Codespaces
-Marketplace
-Explore
- 
-@mamatha2021 
-mamatha2021
-/
-mamatha2021
-Public
-Fork your own copy of mamatha2021/mamatha2021
-Code
-Pull requests
-Actions
-Projects
-Security
-Insights
-Settings
-mamatha2021/cdpipeline.yaml
-@mamatha2021
-mamatha2021 Create cdpipeline.yaml
-…
-Latest commit a28c34b 2 hours ago
- History
- 1 contributor
-34 lines (33 sloc)  802 Bytes
+name: CD-terraform Plan Destroy
 
-name: CD - terraform Plan Destroy
 on:
   workflow_dispatch:
     inputs:
