@@ -29,8 +29,7 @@ on:
       destroy:
         description: Launch Terraform destroy ?
         required: true
-        type: boolean
-        default: false
+        type: string
 
 env:
   TERRAFORM_VERSION : 1.1.6
