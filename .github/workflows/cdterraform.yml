@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: test pipeline
-        id: checkout-management
+        #id: checkout-management
         uses: actions/checkout@v2
       - name : test run  
         run: echo helloworld
@@ -58,13 +58,13 @@ jobs:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false
       - name: Terraform init
-        id: init
+        #id: init
         run: terraform init
         shell: bash
         working-directory: .
       - name: Terraform Plan
-        id: plan
+        #id: plan
         run: terraform plan -input=false
       - name: Terraform apply
-        id: apply
+        #id: apply
         run: terraform apply -input=false -auto-approve 
