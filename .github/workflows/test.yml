@@ -30,6 +30,11 @@ on:
         required: true
         type: boolean
         default: false
+      confirmation:
+         description: to get the confirmationto run the pipeline
+         type: string
+         default: false
+         
 
 env:
   TERRAFORM_VERSION : 1.1.6
