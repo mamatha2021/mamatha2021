@@ -1,0 +1,110 @@
+name: CI/CD
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  terraform_plan:
+    runs-on: [self-hosted, default]
+    if: ${{ github.actor != 'scpapplicationorderapp[bot]' }}    environment: ${{inputs.env}}    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+        with:
+          path: app
+      - name: Extract Release Tag
+        id: ReleaseTag
+        run: |
+          FILE=./app/config.json
+          if [ -f "$FILE" ]; then
+              echo "$FILE exists."
+          else 
+              echo "Missing file in your repository: $FILE does not exist. 
+              Please add a file named config.json to your repository on the first level, i.e. 
+                            app-repo
+              │   .github
+              │   README.md                │   env
+              │   main.tf
+              │   env
+              │   global_vars.tfvars
+              │   variables.tf
+               ... possibly you have more files on this level
+              │   config.json
+                            In this file, please state the release version of the scp-tf-core-aws you 
+              are using as follows:
+                              {
+                  \"scp-tf-aws-core-release\": \"v*.*\"
+                }"
+                          fi
+          content=`cat ./app/config.json`
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+          echo "::set-output name=packageJson::$content"
+      - name: Release Tag
+        run: |
+          echo "${{fromJson(steps.ReleaseTag.outputs.packageJson).scp-tf-aws-core-release}}"
+          re='^v[0-9][0-9]*\.[0-9][0-9]*+$'
+          if [[ ${{fromJson(steps.ReleaseTag.outputs.packageJson).scp-tf-aws-core-release}} =~ $re ]]; 
+            then echo "Release tag has correct format."
+          else 
+            echo "Your release tag in config.json is ${{fromJson(steps.ReleaseTag.outputs.packageJson).scp-tf-aws-core-release}}.
+            This is an incorrect format.
+            Please enter release tag in the correct format v*.* in your config.json"
+            exit 1
+          fi
+      - name: Checkout Core-Repo
+        id: checkoutRepo
+        uses: actions/checkout@v3
+        with:
+          repository: scp/scp-tf-core-aws
+          ref : tags/${{fromJson(steps.ReleaseTag.outputs.packageJson).scp-tf-aws-core-release}}          path: scp-tf-core-aws
+        continue-on-error: true 
+      - name: Check if Core-Repo was checked out correctly
+        run: | 
+            if [[ ${{steps.checkoutRepo.outcome}} == failure ]]
+              then
+                echo "Please check if the release tag in your config.json exists in the scp-tf-core-aws repository.
+                If the release tag exists and you entered it correctly into your config.json, please contact SCP team for assistance."
+                exit 1
+              else echo "Checkout successful!"
+            fi
+      - name: List files
+        run: ls -la
+      - name: Run Terraform Init & Plan
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}        run: |
+          mkdir -p -m777 ${{ github.workspace }}/output/plan
+          cd app
+          terraform init -backend-config=env/${{inputs.env}}/scp/backend.tfvars
+          terraform plan -var-file=global_vars.tfvars -var-file=env/${{inputs.env}}/scp/env.tfvars -var-file=env/${{inputs.env}}/app/env.tfvars -no-color -out=${{ github.workspace }}/output/plan/${{inputs.env}}-tf.plan
+          cp -Rf ../scp-tf-core-aws ${{ github.workspace }}/output
+          cp -Rf .terraform .terraform.lock.hcl ${{ github.workspace }}/output/plan/
+          cp -R dependencies ${{ github.workspace }}/output/plan/ 2>/dev/null || :
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+         name: ${{inputs.env}}         path: ${{ github.workspace }}/output/
+         if-no-files-found: error
+
+  terraform_apply:
+    runs-on: [self-hosted, default]
+    if: ${{ github.actor != 'scpapplicationorderapp[bot]' }}    environment: ${{inputs.env}}    needs: terraform_plan
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{inputs.env}}      - name: Run Terraform Apply
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}        run: |
+          cd plan 
+          chmod -R 777 .terraform/*
+          terraform apply ${{inputs.env}}-tf.plan
