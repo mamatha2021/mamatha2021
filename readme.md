@@ -121,7 +121,7 @@ resource "aws_security_group" "aws_MQ_security_group" {
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_awsmq"></a> [aws mq](#module) |
-| <a name="module_"></a> [this](#module\secretmanager)|
+| <a name="module_secretmanager"></a> [this](#module\secretmanager)|
 
 ## Resources
 
