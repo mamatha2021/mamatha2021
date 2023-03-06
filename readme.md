@@ -159,8 +159,8 @@ Available targets:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_security_group"></a> [security\_group](#module\_security\_group) | cloudposse/security-group/aws |1.1.6 |
-| <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
+| <a name="module_awsmq"></a> [aws mq](#module) |
+| <a name="module_"></a> [this](#module\secretmanager)|
 
 ## Resources
 
@@ -174,9 +174,6 @@ Available targets:
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_security_group_rules"></a> [additional\_security\_group\_rules](#input\_additional\_security\_group\_rules) | A list of Security Group rule objects to add to the created security group, in addition to the ones<br>this module normally creates. (To suppress the module's rules, set `create_security_group` to false<br>and supply your own security group(s) via `associated_security_group_ids`.)<br>The keys and values of the objects are fully compatible with the `aws_security_group_rule` resource, except<br>for `security_group_id` which will be ignored, and the optional "key" which, if provided, must be unique and known at "plan" time.<br>For more info see https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule<br>and https://github.com/cloudposse/terraform-aws-security-group. | `list(any)` | `[]` | no |
 
-| <a name="input_use_aws_owned_key"></a> [use\_aws\_owned\_key](#input\_use\_aws\_owned\_key) | Boolean to enable an AWS owned Key Management Service (KMS) Customer Master Key (CMK) for Amazon MQ encryption that is not in your account | `bool` | `true` | no |
-| <a name="input_use_existing_security_groups"></a> [use\_existing\_security\_groups](#input\_use\_existing\_security\_groups) | DEPRECATED: Use `create_security_group` instead.<br>Historical description: Set to `true` to disable Security Group creation | `bool` | `null` | no |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The ID of the VPC to create the broker in | `string` | n/a | yes |
 
 ## Outputs
 
