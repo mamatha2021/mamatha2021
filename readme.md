@@ -1,11 +1,5 @@
 # aws-iac-module-mq
 
-<!-- markdownlint-disable -->
-# terraform-aws-mq-broker [![Latest Release]
-<!-- markdownlint-restore -->
-
-[![README Header][readme_header_img]][readme_header_link]
-
 
 <!--
 
